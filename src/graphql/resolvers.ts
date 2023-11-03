@@ -397,6 +397,17 @@ const resolvers = {
       };
     },
     // @ts-ignore
+    updateTopic: async (_, { topicID, input }) => {
+      return await TopicModel.findByIdAndUpdate(topicID, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteTopic: async (_, { topicID }) => {
+      const deletedTopic = await TopicModel.findByIdAndDelete(topicID);
+      return deletedTopic ? topicID : null;
+    },
+    // @ts-ignore
     createExamQuestion: async (_, { input }) => {
       const createExamQuestion = await ExamQuestionModel.create(input);
       return {
