@@ -13,120 +13,200 @@ import {
   StudentModel,
   SubjectModel,
   TeacherModel,
+  TeacherSectionMapModel,
   TopicModel,
 } from '../models/model';
+import { ObjectId } from 'mongodb';
+import { Role, Service, ServiceFeePlan, User } from '../models/services';
+import bcrypt from 'bcryptjs';
+import { generateToken } from '../utils/generateToken';
+import { ChatMessage, Group, Reply, Thread } from '../models/chat';
 
 const resolvers = {
   Query: {
     // @ts-ignore
-    getImage: async (_, { imageID }) => {
-      return await ImageModel.findById(imageID);
+    getImage: async (_, { _id }) => {
+      return await ImageModel.findById(_id);
     },
     getImages: async () => {
       return await ImageModel.find();
     },
     // @ts-ignore
-    getBook: async (_, { bookID }) => {
-      return await BookModel.findById(bookID);
+    getBook: async (_, { _id }) => {
+      return await BookModel.findById(_id);
     },
     getBooks: async () => {
       return await BookModel.find();
     },
     // @ts-ignore
-    getSubject: async (_, { subjectID }) => {
-      return await SubjectModel.findById(subjectID);
+    getSubject: async (_, { _id }) => {
+      return await SubjectModel.findById(_id);
     },
     getSubjects: async () => {
       return await SubjectModel.find();
     },
     // @ts-ignore
-    getClass: async (_, { classID }) => {
-      return await ClassModel.findById(classID);
+    getClass: async (_, { _id }) => {
+      return await ClassModel.findById(_id);
     },
     getClasses: async () => {
       return await ClassModel.find();
     },
     // @ts-ignore
-    getBoard: async (_, { boardID }) => {
-      return await BoardModel.findById(boardID);
+    getBoard: async (_, { _id }) => {
+      return await BoardModel.findById(_id);
     },
     getBoards: async () => {
       return await BoardModel.find();
     },
     // @ts-ignore
-    getAcademicYear: async (_, { yearID }) => {
-      return await AcademicYearModel.findById(yearID);
+    getAcademicYear: async (_, { _id }) => {
+      return await AcademicYearModel.findById(_id);
     },
     getAcademicYears: async () => {
       return await AcademicYearModel.find();
     },
     // @ts-ignore
-    getSchool: async (_, { schoolID }) => {
-      return await SchoolModel.findById(schoolID);
+    getSchool: async (_, { _id }) => {
+      return await SchoolModel.findById(_id);
     },
     getSchools: async () => {
       return await SchoolModel.find();
     },
     // @ts-ignore
-    getClassSection: async (_, { classID, schoolID, yearID, number }) => {
-      return await ClassSectionModel.findOne({
-        class: classID,
-        school: schoolID,
-        year: yearID,
-        number,
-      });
+    getClassSection: async (
+      _: any,
+      { classID, schoolID, yearID, number }: any,
+      context: any
+    ) => {
+      try {
+        const classSection = await context.db
+          .collection('classSections')
+          .findOne({
+            class: new ObjectId(classID),
+            school: new ObjectId(schoolID),
+            year: new ObjectId(yearID),
+            number,
+          });
+        return classSection;
+      } catch (error) {
+        throw new Error('Error fetching class section');
+      }
     },
     getClassSections: async () => {
       return await ClassSectionModel.find();
     },
     // @ts-ignore
-    getOrganization: async (_, { orgID }) => {
-      return await OrganizationModel.findById(orgID);
+    getOrganization: async (_, { _id }) => {
+      return await OrganizationModel.findById(_id);
     },
     getOrganizations: async () => {
       return await OrganizationModel.find();
     },
     // @ts-ignore
-    getTeacher: async (_, { teacherID }) => {
-      return await TeacherModel.findById(teacherID);
+    getTeacher: async (_, { _id }) => {
+      return await TeacherModel.findById(_id);
     },
     getTeachers: async () => {
       return await TeacherModel.find();
     },
     // @ts-ignore
-    getStudent: async (_, studentID) => {
-      return await StudentModel.findById(studentID);
+    getTeacherSectionMap: async (_, { _id }) => {
+      return await TeacherSectionMapModel.findById(_id);
+    },
+    getTeacherSectionMaps: async () => {
+      return await TeacherSectionMapModel.find();
+    },
+    // @ts-ignore
+    getStudent: async (_, _id) => {
+      return await StudentModel.findById(_id);
     },
     getStudents: async () => {
       return await StudentModel.find();
     },
     // @ts-ignore
-    getParent: async (_, { parentID }) => {
-      return await ParentModel.findById(parentID);
+    getParent: async (_, { _id }) => {
+      return await ParentModel.findById(_id);
     },
     getParents: async () => {
       return await ParentModel.find();
     },
     // @ts-ignore
-    getTopic: async (_, { topicID }) => {
-      return await TopicModel.findById(topicID);
+    getTopic: async (_, { _id }) => {
+      return await TopicModel.findById(_id);
     },
     getTopics: async () => {
       return await TopicModel.find();
     },
     // @ts-ignore
-    getExamQuestion: async (_, { questionID }) => {
-      return await ExamQuestionModel.findById(questionID);
+    getExamQuestion: async (_, { _id }) => {
+      return await ExamQuestionModel.findById(_id);
     },
     getExamQuestions: async () => {
       return await ExamQuestionModel.find();
     },
     // @ts-ignore
-    getExamStudentResponse: async (_, { responseID }) => {
-      return await ExamStudentResponseModel.findById(responseID);
+    getExamStudentResponse: async (_, { _id }) => {
+      return await ExamStudentResponseModel.findById(_id);
     },
     getExamStudentResponses: async () => {
       return await ExamStudentResponseModel.find();
+    },
+    // @ts-ignore
+    getService: async (_, { _id }) => {
+      return await Service.findById(_id);
+    },
+    getServices: async () => {
+      return await Service.find();
+    },
+    // @ts-ignore
+    getRole: async (_, { _id }) => {
+      return await Role.findById(_id);
+    },
+    getRoles: async () => {
+      return await Role.find();
+    },
+    // @ts-ignore
+    getUser: async (_, { _id }) => {
+      return await User.findById(_id);
+    },
+    getUsers: async () => {
+      return await User.find();
+    },
+    // @ts-ignore
+    getServiceFeePlan: async (_, { _id }) => {
+      return await ServiceFeePlan.findById(_id);
+    },
+    getServiceFeePlans: async () => {
+      return await ServiceFeePlan.find();
+    },
+    // @ts-ignore
+    getGroup: async (_, { _id }) => {
+      return await Group.findById(_id);
+    },
+    getGroups: async () => {
+      return await Group.find();
+    },
+    getChatMessages: async () => {
+      return await ChatMessage.find();
+    },
+    // @ts-ignore
+    getChatMessage: async (_, { _id }) => {
+      return await ChatMessage.findById(_id);
+    },
+    // @ts-ignore
+    getThread: async (_, { _id }) => {
+      return await Thread.findById(_id);
+    },
+    getThreads: async () => {
+      return await Thread.find();
+    },
+    // @ts-ignore
+    getReply: async (_, { _id }) => {
+      return await Reply.findById(_id);
+    },
+    getReplies: async () => {
+      return await Reply.find();
     },
   },
   Mutation: {
@@ -140,17 +220,17 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateImage: async (_, { imageID, input }) => {
-      return await ImageModel.findByIdAndUpdate(imageID, input, { new: true });
+    updateImage: async (_, { _id, input }) => {
+      return await ImageModel.findByIdAndUpdate(_id, input, { new: true });
     },
     // @ts-ignore
-    deleteImage: async (_, { imageID }) => {
-      const deletedImage = await ImageModel.findByIdAndDelete(imageID);
-      return deletedImage ? imageID : null;
+    deleteImage: async (_, { _id }) => {
+      const deletedImage = await ImageModel.findByIdAndDelete(_id);
+      return deletedImage ? _id : null;
     },
     // @ts-ignore
-    createBook: async (_, { input }) => {
-      const createBook = await BookModel.create(input);
+    createBook: async (_, { _id }) => {
+      const createBook = await BookModel.create(_id);
       return {
         // @ts-ignore
         ...createBook._doc,
@@ -158,13 +238,13 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateBook: async (_, { bookID, input }) => {
-      return await BoardModel.findByIdAndUpdate(bookID, input, { new: true });
+    updateBook: async (_, { _id, input }) => {
+      return await BoardModel.findByIdAndUpdate(_id, input, { new: true });
     },
     // @ts-ignore
-    deleteBook: async (_, { bookID }) => {
-      const deletedBook = await BookModel.findByIdAndDelete(bookID);
-      return deletedBook ? bookID : null;
+    deleteBook: async (_, { _id }) => {
+      const deletedBook = await BookModel.findByIdAndDelete(_id);
+      return deletedBook ? _id : null;
     },
     // @ts-ignore
     createSubject: async (_, { input }) => {
@@ -176,15 +256,15 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateSubject: async (_, { subjectID, input }) => {
-      return await SubjectModel.findByIdAndUpdate(subjectID, input, {
+    updateSubject: async (_, { _id, input }) => {
+      return await SubjectModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteSubject: async (_, { subjectID }) => {
-      const deletedSubject = await SubjectModel.findByIdAndDelete(subjectID);
-      return deletedSubject ? subjectID : null;
+    deleteSubject: async (_, { _id }) => {
+      const deletedSubject = await SubjectModel.findByIdAndDelete(_id);
+      return deletedSubject ? _id : null;
     },
     // @ts-ignore
     createClass: async (_, { input }) => {
@@ -196,15 +276,15 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateClass: async (_, { classID, input }) => {
-      return await ClassModel.findByIdAndUpdate(classID, input, {
+    updateClass: async (_, { _id, input }) => {
+      return await ClassModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteClass: async (_, { classID }) => {
-      const deletedClass = await ClassModel.findByIdAndDelete(classID);
-      return deletedClass ? classID : null;
+    deleteClass: async (_, { _id }) => {
+      const deletedClass = await ClassModel.findByIdAndDelete(_id);
+      return deletedClass ? _id : null;
     },
     // @ts-ignore
     createBoard: async (_, { input }) => {
@@ -216,15 +296,15 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateBoard: async (_, { boardID, input }) => {
-      return await BoardModel.findByIdAndUpdate(boardID, input, {
+    updateBoard: async (_, { _id, input }) => {
+      return await BoardModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteBoard: async (_, { boardID }) => {
-      const deletedBoard = await BoardModel.findByIdAndDelete(boardID);
-      return deletedBoard ? boardID : null;
+    deleteBoard: async (_, { _id }) => {
+      const deletedBoard = await BoardModel.findByIdAndDelete(_id);
+      return deletedBoard ? _id : null;
     },
     // @ts-ignore
     createAcademicYear: async (_, { input }) => {
@@ -236,17 +316,17 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateAcademicYear: async (_, { yearID, input }) => {
-      return await AcademicYearModel.findByIdAndUpdate(yearID, input, {
+    updateAcademicYear: async (_, { _id, input }) => {
+      return await AcademicYearModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteAcademicYear: async (_, { yearID }) => {
+    deleteAcademicYear: async (_, { _id }) => {
       const deletedAcademicYear = await AcademicYearModel.findByIdAndDelete(
-        yearID
+        _id
       );
-      return deletedAcademicYear ? yearID : null;
+      return deletedAcademicYear ? _id : null;
     },
     // @ts-ignore
     createSchool: async (_, { input }) => {
@@ -258,15 +338,15 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateSchool: async (_, { schoolID, input }) => {
-      return await SchoolModel.findByIdAndUpdate(schoolID, input, {
+    updateSchool: async (_, { _id, input }) => {
+      return await SchoolModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteSchool: async (_, { schoolID }) => {
-      const deletedSchool = await SchoolModel.findByIdAndDelete(schoolID);
-      return deletedSchool ? schoolID : null;
+    deleteSchool: async (_, { _id }) => {
+      const deletedSchool = await SchoolModel.findByIdAndDelete(_id);
+      return deletedSchool ? _id : null;
     },
     // @ts-ignore
     createClassSection: async (_, { input }) => {
@@ -284,7 +364,12 @@ const resolvers = {
       { classID, schoolID, yearID, number, input }
     ) => {
       return await ClassSectionModel.findOneAndUpdate(
-        { class: classID, school: schoolID, year: yearID, number },
+        {
+          class: new ObjectId(classID),
+          school: new ObjectId(schoolID),
+          year: new ObjectId(yearID),
+          number,
+        },
         input,
         { new: true }
       );
@@ -292,9 +377,9 @@ const resolvers = {
     // @ts-ignore
     deleteClassSection: async (_, { classID, schoolID, yearID, number }) => {
       const deletedClassSection = await ClassSectionModel.findOneAndDelete({
-        class: classID,
-        school: schoolID,
-        year: yearID,
+        class: new ObjectId(classID),
+        school: new ObjectId(schoolID),
+        year: new ObjectId(yearID),
         number,
       });
       return deletedClassSection ? classID : null;
@@ -309,23 +394,23 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateOrganization: async (_, { orgID, input }) => {
-      const newOrg = await OrganizationModel.findByIdAndUpdate(orgID, input, {
+    updateOrganization: async (_, { _id, input }) => {
+      const newOrg = await OrganizationModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
       if (!newOrg) return null;
       return {
         // @ts-ignore
         ...newOrg._doc,
-        orgID: newOrg._id,
+        _id: newOrg._id,
       };
     },
     // @ts-ignore
-    deleteOrganization: async (_, { orgID }) => {
+    deleteOrganization: async (_, { _id }) => {
       const deletedOrganization = await OrganizationModel.findByIdAndDelete(
-        orgID
+        _id
       );
-      return deletedOrganization ? orgID : null;
+      return deletedOrganization ? _id : null;
     },
     // @ts-ignore
     createTeacher: async (_, { input }) => {
@@ -333,19 +418,19 @@ const resolvers = {
       return {
         // @ts-ignore
         ...createTeacher._doc,
-        teacherID: createTeacher._id,
+        _id: createTeacher._id,
       };
     },
     // @ts-ignore
-    updateTeacher: async (_, { teacherID, input }) => {
-      return await TeacherModel.findByIdAndUpdate(teacherID, input, {
+    updateTeacher: async (_, { _id, input }) => {
+      return await TeacherModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteTeacher: async (_, { teacherID }) => {
-      const deletedTeacher = await TeacherModel.findByIdAndDelete(teacherID);
-      return deletedTeacher ? teacherID : null;
+    deleteTeacher: async (_, { _id }) => {
+      const deletedTeacher = await TeacherModel.findByIdAndDelete(_id);
+      return deletedTeacher ? _id : null;
     },
     // @ts-ignore
     createStudent: async (_, { input }) => {
@@ -357,15 +442,15 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateStudent: async (_, { studentID, input }) => {
-      return await StudentModel.findByIdAndUpdate(studentID, input, {
+    updateStudent: async (_, { _id, input }) => {
+      return await StudentModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteStudent: async (_, { studentID }) => {
-      const deletedStudent = await StudentModel.findByIdAndDelete(studentID);
-      return deletedStudent ? studentID : null;
+    deleteStudent: async (_, { _id }) => {
+      const deletedStudent = await StudentModel.findByIdAndDelete(_id);
+      return deletedStudent ? _id : null;
     },
     // @ts-ignore
     createParent: async (_, { input }) => {
@@ -377,15 +462,15 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateParent: async (_, { parentID, input }) => {
-      return await ParentModel.findByIdAndUpdate(parentID, input, {
+    updateParent: async (_, { _id, input }) => {
+      return await ParentModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteParent: async (_, { parentID }) => {
-      const deletedParent = await ParentModel.findByIdAndDelete(parentID);
-      return deletedParent ? parentID : null;
+    deleteParent: async (_, { _id }) => {
+      const deletedParent = await ParentModel.findByIdAndDelete(_id);
+      return deletedParent ? _id : null;
     },
     // @ts-ignore
     createTopic: async (_, { input }) => {
@@ -397,15 +482,15 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateTopic: async (_, { topicID, input }) => {
-      return await TopicModel.findByIdAndUpdate(topicID, input, {
+    updateTopic: async (_, { _id, input }) => {
+      return await TopicModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteTopic: async (_, { topicID }) => {
-      const deletedTopic = await TopicModel.findByIdAndDelete(topicID);
-      return deletedTopic ? topicID : null;
+    deleteTopic: async (_, { _id }) => {
+      const deletedTopic = await TopicModel.findByIdAndDelete(_id);
+      return deletedTopic ? _id : null;
     },
     // @ts-ignore
     createExamQuestion: async (_, { input }) => {
@@ -417,17 +502,17 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateExamQuestion: async (_, { questionID, input }) => {
-      return await ExamQuestionModel.findByIdAndUpdate(questionID, input, {
+    updateExamQuestion: async (_, { _id, input }) => {
+      return await ExamQuestionModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteExamQuestion: async (_, { questionID }) => {
+    deleteExamQuestion: async (_, { _id }) => {
       const deletedExamQuestion = await ExamQuestionModel.findByIdAndDelete(
-        questionID
+        _id
       );
-      return deletedExamQuestion ? questionID : null;
+      return deletedExamQuestion ? _id : null;
     },
     // @ts-ignore
     createExamStudentResponse: async (_, { input }) => {
@@ -441,18 +526,226 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateExamStudentResponse: async (_, { responseID, input }) => {
-      return await ExamStudentResponseModel.findByIdAndUpdate(
-        responseID,
-        input,
-        { new: true }
-      );
+    updateExamStudentResponse: async (_, { _id, input }) => {
+      return await ExamStudentResponseModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
     },
     // @ts-ignore
-    deleteExamStudentResponse: async (_, { responseID }) => {
+    deleteExamStudentResponse: async (_, { _id }) => {
       const deletedExamStudentResponse =
-        await ExamStudentResponseModel.findByIdAndDelete(responseID);
-      return deletedExamStudentResponse ? responseID : null;
+        await ExamStudentResponseModel.findByIdAndDelete(_id);
+      return deletedExamStudentResponse ? _id : null;
+    },
+    // @ts-ignore
+    createService: async (_, { input }, { userRole }) => {
+      if (!userRole) {
+        throw new Error('Not authorized');
+      }
+      const createService = await Service.create(input);
+      return {
+        // @ts-ignore
+        ...createService._doc,
+        serviceID: createService._id,
+      };
+    },
+    // @ts-ignore
+    updateService: async (_, { _id, input }) => {
+      return await Service.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteService: async (_, { _id }) => {
+      const deletedService = await Service.findByIdAndDelete(_id);
+      return deletedService ? _id : null;
+    },
+    // @ts-ignore
+    createRole: async (_, { input }) => {
+      const createRole = await Role.create(input);
+      return {
+        // @ts-ignore
+        ...createRole._doc,
+        roleID: createRole._id,
+      };
+    },
+    // @ts-ignore
+    updateRole: async (_, { _id, input }) => {
+      return await Role.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteRole: async (_, { _id }) => {
+      const deletedRole = await Role.findByIdAndDelete(_id);
+      return deletedRole ? _id : null;
+    },
+    // @ts-ignore
+    createUser: async (_, { input }) => {
+      const user = await User.findOne({ email: input.email });
+      if (user) {
+        throw new Error('User already exists');
+      }
+
+      // hash password
+      const hashedPassword = await bcrypt.hash(input.password, 10);
+      input.password = hashedPassword;
+      const createUser = await User.create(input);
+      return {
+        // @ts-ignore
+        ...createUser._doc,
+        userID: createUser._id,
+      };
+    },
+    // @ts-ignore
+    userLogin: async (_, { email, password }) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error('Invalid email or password');
+      }
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      if (!isPasswordMatch) {
+        throw new Error('Invalid email or password');
+      }
+      const token = generateToken(user.role);
+      return {
+        token,
+      };
+    },
+    // @ts-ignore
+    updateUser: async (_, { _id, input }) => {
+      return User.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteUser: async (_, { _id }) => {
+      const deletedUser = await User.findByIdAndDelete(_id);
+      return deletedUser ? _id : null;
+    },
+    // @ts-ignore
+    createServiceFeePlan: async (_, { input }) => {
+      const createServiceFeePlan = await ServiceFeePlan.create(input);
+      return {
+        // @ts-ignore
+        ...createServiceFeePlan._doc,
+        planID: createServiceFeePlan._id,
+      };
+    },
+    // @ts-ignore
+    updateServiceFeePlan: async (_, { _id, input }) => {
+      return await ServiceFeePlan.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteServiceFeePlan: async (_, { _id }) => {
+      const deletedServiceFeePlan = await ServiceFeePlan.findByIdAndDelete(_id);
+      return deletedServiceFeePlan ? _id : null;
+    },
+    // @ts-ignore
+    createTeacherSectionMap: async (_, { input }) => {
+      const createTeacherSectionMap = await TeacherSectionMapModel.create(
+        input
+      );
+      return {
+        // @ts-ignore
+        ...createTeacherSectionMap._doc,
+        mapID: createTeacherSectionMap._id,
+      };
+    },
+    // @ts-ignore
+    updateTeacherSectionMap: async (_, { _id, input }) => {
+      return await TeacherSectionMapModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteTeacherSectionMap: async (_, { _id }) => {
+      const deletedTeacherSectionMap =
+        await TeacherSectionMapModel.findByIdAndDelete(_id);
+      return deletedTeacherSectionMap ? _id : null;
+    },
+    // @ts-ignore
+    createGroup: async (_, { input }) => {
+      const createGroup = await Group.create(input);
+      return {
+        // @ts-ignore
+        ...createGroup._doc,
+        groupID: createGroup._id,
+      };
+    },
+    // @ts-ignore
+    updateGroup: async (_, { _id, input }) => {
+      return await Group.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteGroup: async (_, { _id }) => {
+      const deletedGroup = await Group.findByIdAndDelete(_id);
+      return deletedGroup ? _id : null;
+    },
+    // @ts-ignore
+    createChatMessage: async (_, { input }) => {
+      const createChatMessage = await ChatMessage.create(input);
+      return {
+        // @ts-ignore
+        ...createChatMessage._doc,
+        messageID: createChatMessage._id,
+      };
+    },
+
+    // @ts-ignore
+    updateChatMessage: async (_, { _id, input }) => {
+      return await ChatMessage.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteChatMessage: async (_, { _id }) => {
+      const deletedChatMessage = await ChatMessage.findByIdAndDelete(_id);
+      return deletedChatMessage ? _id : null;
+    },
+    // @ts-ignore
+    createThread: async (_, { input }) => {
+      const createThread = await Thread.create(input);
+      return {
+        // @ts-ignore
+        ...createThread._doc,
+        threadID: createThread._id,
+      };
+    },
+    // @ts-ignore
+    updateThread: async (_, { _id, input }) => {
+      return await Thread.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteThread: async (_, { _id }) => {
+      const deletedThread = await Thread.findByIdAndDelete(_id);
+      return deletedThread ? _id : null;
+    },
+    // @ts-ignore
+    createReply: async (_, { input }) => {
+      const createReply = await Reply.create(input);
+      return {
+        // @ts-ignore
+        ...createReply._doc,
+        replyID: createReply._id,
+      };
+    },
+    // @ts-ignore
+    updateReply: async (_, { _id, input }) => {
+      return await Reply.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteReply: async (_, { _id }) => {
+      const deletedReply = await Reply.findByIdAndDelete(_id);
+      return deletedReply ? _id : null;
     },
   },
 };
