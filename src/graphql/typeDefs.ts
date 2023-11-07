@@ -314,10 +314,10 @@ const typeDefs = gql`
   }
 
   type Query {
-    quizzes: [Quiz]
-    quiz(id: ID!): Quiz
-    questions: [Question]
-    question(id: ID!): Question
+    getQuizzes: [Quiz]
+    getQuiz(id: ID!): Quiz
+    getQuestions: [Question]
+    getQuestion(id: ID!): Question
     getImage(_id: ID!): Image
     getImages: [Image]
     getBook(_id: ID!): Book

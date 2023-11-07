@@ -210,14 +210,7 @@ const resolvers = {
       return await Reply.find();
     },
     // @ts-ignore
-    getFeedback: async (_, { _id }) => {
-      return await FeedbackModel.findById(_id);
-    },
-    getFeedbacks: async () => {
-      return await FeedbackModel.find();
-    },
-    // @ts-ignore
-    getQuizz: async (_, { _id }) => {
+    getQuiz: async (_, { _id }) => {
       return await FeedbackModel.findById(_id);
     },
     getQuizzes: async () => {
@@ -770,7 +763,7 @@ const resolvers = {
       return deletedReply ? _id : null;
     },
     // @ts-ignore
-    createQuizz: async (_, { input }) => {
+    createQuiz: async (_, { input }) => {
       const createQuizz = await QuizModel.create(input);
       return {
         // @ts-ignore
@@ -779,13 +772,13 @@ const resolvers = {
       };
     },
     // @ts-ignore
-    updateQuizz: async (_, { _id, input }) => {
+    updateQuiz: async (_, { _id, input }) => {
       return await QuizModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteQuizz: async (_, { _id }) => {
+    deleteQuiz: async (_, { _id }) => {
       const deletedQuizz = await QuizModel.findByIdAndDelete(_id);
       return deletedQuizz ? _id : null;
     },
