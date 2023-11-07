@@ -21,6 +21,7 @@ import { Role, Service, ServiceFeePlan, User } from '../models/services';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/generateToken';
 import { ChatMessage, Group, Reply, Thread } from '../models/chat';
+import { FeedbackModel, QuestionModel, QuizModel } from '../models/quizz-app';
 
 const resolvers = {
   Query: {
@@ -207,6 +208,27 @@ const resolvers = {
     },
     getReplies: async () => {
       return await Reply.find();
+    },
+    // @ts-ignore
+    getFeedback: async (_, { _id }) => {
+      return await FeedbackModel.findById(_id);
+    },
+    getFeedbacks: async () => {
+      return await FeedbackModel.find();
+    },
+    // @ts-ignore
+    getQuizz: async (_, { _id }) => {
+      return await FeedbackModel.findById(_id);
+    },
+    getQuizzes: async () => {
+      return await FeedbackModel.find();
+    },
+    // @ts-ignore
+    getQuestion: async (_, { _id }) => {
+      return await FeedbackModel.findById(_id);
+    },
+    getQuestions: async () => {
+      return await FeedbackModel.find();
     },
   },
   Mutation: {
@@ -746,6 +768,46 @@ const resolvers = {
     deleteReply: async (_, { _id }) => {
       const deletedReply = await Reply.findByIdAndDelete(_id);
       return deletedReply ? _id : null;
+    },
+    // @ts-ignore
+    createQuizz: async (_, { input }) => {
+      const createQuizz = await QuizModel.create(input);
+      return {
+        // @ts-ignore
+        ...createQuizz._doc,
+        quizzID: createQuizz._id,
+      };
+    },
+    // @ts-ignore
+    updateQuizz: async (_, { _id, input }) => {
+      return await QuizModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteQuizz: async (_, { _id }) => {
+      const deletedQuizz = await QuizModel.findByIdAndDelete(_id);
+      return deletedQuizz ? _id : null;
+    },
+    // @ts-ignore
+    createQuestion: async (_, { input }) => {
+      const createQuestion = await QuestionModel.create(input);
+      return {
+        // @ts-ignore
+        ...createQuestion._doc,
+        questionID: createQuestion._id,
+      };
+    },
+    // @ts-ignore
+    updateQuestion: async (_, { _id, input }) => {
+      return await QuestionModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteQuestion: async (_, { _id }) => {
+      const deletedQuestion = await QuestionModel.findByIdAndDelete(_id);
+      return deletedQuestion ? _id : null;
     },
   },
 };
