@@ -21,7 +21,12 @@ import { Role, Service, ServiceFeePlan, User } from '../models/services';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/generateToken';
 import { ChatMessage, Group, Reply, Thread } from '../models/chat';
-import { FeedbackModel, QuestionModel, QuizModel } from '../models/quizz-app';
+import {
+  ImageDetailsModel,
+  OptionModel,
+  QuestionModel,
+  QuizModel,
+} from '../models/quizz-app';
 
 const resolvers = {
   Query: {
@@ -210,18 +215,32 @@ const resolvers = {
       return await Reply.find();
     },
     // @ts-ignore
-    getQuiz: async (_, { _id }) => {
-      return await FeedbackModel.findById(_id);
+    getImageDetailsInput: async (_, { _id }) => {
+      return await ImageDetailsModel.findById(_id);
     },
-    getQuizzes: async () => {
-      return await FeedbackModel.find();
+    getImageDetailsInputs: async () => {
+      return await ImageDetailsModel.find();
     },
     // @ts-ignore
-    getQuestion: async (_, { _id }) => {
-      return await FeedbackModel.findById(_id);
+    getOptionInput: async (_, { _id }) => {
+      return await OptionModel.findById(_id);
     },
-    getQuestions: async () => {
-      return await FeedbackModel.find();
+    getOptionInputs: async () => {
+      return await OptionModel.find();
+    },
+    // @ts-ignore
+    getQuestionInput: async (_, { _id }) => {
+      return await QuestionModel.findById(_id);
+    },
+    getQuestionInputs: async () => {
+      return await QuestionModel.find();
+    },
+    // @ts-ignore
+    getQuizInput: async (_, { _id }) => {
+      return await QuizModel.findById(_id);
+    },
+    getQuizInputs: async () => {
+      return await QuizModel.find();
     },
   },
   Mutation: {
@@ -763,44 +782,86 @@ const resolvers = {
       return deletedReply ? _id : null;
     },
     // @ts-ignore
-    createQuiz: async (_, { input }) => {
-      const createQuizz = await QuizModel.create(input);
+    createImageDetailsInput: async (_, { input }) => {
+      const createImageDetailInput = await ImageDetailsModel.create(input);
       return {
         // @ts-ignore
-        ...createQuizz._doc,
-        quizzID: createQuizz._id,
+        ...createImageDetailInput._doc,
+        imageDetailID: createImageDetailInput._id,
       };
     },
     // @ts-ignore
-    updateQuiz: async (_, { _id, input }) => {
-      return await QuizModel.findByIdAndUpdate(_id, input, {
+    updateImageDetailsInput: async (_, { _id, input }) => {
+      return await ImageDetailsModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteQuiz: async (_, { _id }) => {
-      const deletedQuizz = await QuizModel.findByIdAndDelete(_id);
-      return deletedQuizz ? _id : null;
+    deleteImageDetailsInput: async (_, { _id }) => {
+      const deletedImageDetailInput = await ImageDetailsModel.findByIdAndDelete(
+        _id
+      );
+      return deletedImageDetailInput ? _id : null;
     },
     // @ts-ignore
-    createQuestion: async (_, { input }) => {
-      const createQuestion = await QuestionModel.create(input);
+    createOptionInput: async (_, { input }) => {
+      const createOptionInput = await OptionModel.create(input);
       return {
         // @ts-ignore
-        ...createQuestion._doc,
-        questionID: createQuestion._id,
+        ...createOptionInput._doc,
+        optionID: createOptionInput._id,
       };
     },
     // @ts-ignore
-    updateQuestion: async (_, { _id, input }) => {
+    updateOptionInput: async (_, { _id, input }) => {
+      return await OptionModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteOptionInput: async (_, { _id }) => {
+      const deletedOptionInput = await OptionModel.findByIdAndDelete(_id);
+      return deletedOptionInput ? _id : null;
+    },
+    // @ts-ignore
+    createQuestionInput: async (_, { input }) => {
+      const createQuestionInput = await QuestionModel.create(input);
+      return {
+        // @ts-ignore
+        ...createQuestionInput._doc,
+        questionID: createQuestionInput._id,
+      };
+    },
+    // @ts-ignore
+    updateQuestionInput: async (_, { _id, input }) => {
       return await QuestionModel.findByIdAndUpdate(_id, input, {
         new: true,
       });
     },
     // @ts-ignore
-    deleteQuestion: async (_, { _id }) => {
-      const deletedQuestion = await QuestionModel.findByIdAndDelete(_id);
-      return deletedQuestion ? _id : null;
+    deleteQuestionInput: async (_, { _id }) => {
+      const deletedQuestionInput = await QuestionModel.findByIdAndDelete(_id);
+      return deletedQuestionInput ? _id : null;
+    },
+    // @ts-ignore
+    createQuizInput: async (_, { input }) => {
+      const createQuizInput = await QuizModel.create(input);
+      return {
+        // @ts-ignore
+        ...createQuizInput._doc,
+        quizID: createQuizInput._id,
+      };
+    },
+    // @ts-ignore
+    updateQuizInput: async (_, { _id, input }) => {
+      return await QuizModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    deleteQuizInput: async (_, { _id }) => {
+      const deletedQuizInput = await QuizModel.findByIdAndDelete(_id);
+      return deletedQuizInput ? _id : null;
     },
   },
 };

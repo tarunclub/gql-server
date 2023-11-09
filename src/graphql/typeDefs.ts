@@ -227,97 +227,46 @@ const typeDefs = gql`
     token: String!
   }
 
-  type Answer {
-    correct: Boolean
-    tipsAndFeedback: TipsAndFeedback
-    text: String
-  }
-
-  type TipsAndFeedback {
-    tip: String
-    chosenFeedback: String
-    notChosenFeedback: String
-  }
-
-  type Feedback {
-    from: Int
-    to: Int
-    feedback: String
-  }
-
-  type Behaviour {
-    enableRetry: Boolean
-    enableSolutionsButton: Boolean
-    enableCheckButton: Boolean
-    type: String
-    singlePoint: Boolean
-    randomAnswers: Boolean
-    showSolutionsRequiresInput: Boolean
-    confirmCheckDialog: Boolean
-    confirmRetryDialog: Boolean
-    autoCheck: Boolean
-    passPercentage: Int
-    showScorePoints: Boolean
-  }
-
-  type UI {
-    checkAnswerButton: String
-    submitAnswerButton: String
-    showSolutionButton: String
-    tryAgainButton: String
-    tipsLabel: String
-    scoreBarLabel: String
-    tipAvailable: String
-    feedbackAvailable: String
-    readFeedback: String
-    wrongAnswer: String
-    correctAnswer: String
-    shouldCheck: String
-    shouldNotCheck: String
-    noInput: String
-    a11yCheck: String
-    a11yShowSolution: String
-    a11yRetry: String
+  type Quiz {
+    _id: ID!
+    questions: [Question!]!
   }
 
   type Question {
-    id: String
-    text: String
-    overallFeedback: [Feedback]
-    behaviour: Behaviour
-    UI: UI
-    answers: [Answer]
+    _id: ID
+    questionText: String
+    options: [Option]
+    solution: String!
+    timer: Float!
+    questionType: String!
+    imageDetails: ImageDetails
+    taskDescription: String
   }
 
-  type Quiz {
-    id: String
-    name: String
-    introPage: IntroPage
-    progressType: String
-    passPercentage: Int
-    questions: [Question]
-    library: String
-    metadata: Metadata
-    subContentId: String
+  type ImageDetails {
+    _id: ID
+    path: String!
+    height: Float
+    width: Float
   }
 
-  type IntroPage {
-    showIntroPage: Boolean
-    startButtonText: String
-    introduction: String
+  type Option {
+    _id: ID
+    optionText: String!
+    tip: String
+    correct: Boolean
+    dropZone: DropZone
+    imageDetails: ImageDetails
   }
 
-  type Metadata {
-    contentType: String
-    license: String
-    title: String
+  type DropZone {
+    x: Float
+    y: Float
+    width: Float
+    height: Float
   }
 
   type Query {
-    getQuizzes: [Quiz]
-    getQuiz(id: ID!): Quiz
-    getQuestions: [Question]
-    getQuestion(id: ID!): Question
     getImage(_id: ID!): Image
     getImages: [Image]
     getBook(_id: ID!): Book
@@ -373,15 +322,17 @@ const typeDefs = gql`
     getThreads: [Thread]
     getReply(_id: ID!): Reply
     getReplies: [Reply]
+    getImageDetailsInput(_id: ID!): ImageDetails
+    getImageDetailsInputs: [ImageDetails]
+    getOptionInput(_id: ID!): Option
+    getOptionInputs: [Option]
+    getQuestionInput(_id: ID!): Question
+    getQuestionInputs: [Question]
+    getQuizInput(_id: ID!): Quiz
+    getQuizInputs: [Quiz]
   }
 
   type Mutation {
-    createQuiz(quizInput: QuizInput): Quiz
-    updateQuiz(id: ID!, quizInput: QuizInput): Quiz # Define the updateQuiz mutation
-    deleteQuiz(id: ID!): Quiz
-    createQuestion(quizId: ID!, questionInput: QuestionInput): Question
-    updateQuestion(id: ID!, questionInput: QuestionInput): Question
-    deleteQuestion(id: ID!): Question
     createImage(input: ImageInput): Image
     updateImage(_id: ID!, input: ImageInput): Image
     deleteImage(_id: ID!): ID
@@ -486,90 +437,57 @@ const typeDefs = gql`
     createReply(input: ReplyInput): Reply
     updateReply(_id: ID!, input: ReplyInput): Reply
     deleteReply(_id: ID!): ID
+
+    createImageDetailsInput(input: ImageDetailsInput): ImageDetails
+    updateImageDetailsInput(_id: ID!, input: ImageDetailsInput): ImageDetails
+    deleteImageDetailsInput(_id: ID!): ID
+
+    createOptionInput(input: OptionInput): Option
+    updateOptionInput(_id: ID!, input: OptionInput): Option
+    deleteOptionInput(_id: ID!): ID
+
+    createQuestionInput(input: QuestionInput): Question
+    updateQuestionInput(_id: ID!, input: QuestionInput): Question
+    deleteQuestionInput(_id: ID!): ID
+
+    createQuizInput(input: QuizInput): Quiz
+    updateQuizInput(_id: ID!, input: QuizInput): Quiz
+    deleteQuizInput(_id: ID!): ID
   }
 
-  input QuizInput {
-    name: String
-    introPage: IntroPageInput
-    progressType: String
-    passPercentage: Int
-    questions: [QuestionInput]
-    library: String
-    metadata: MetadataInput
-    subContentId: String
+  input ImageDetailsInput {
+    path: String!
+    height: Float
+    width: Float
   }
 
-  input IntroPageInput {
-    showIntroPage: Boolean
-    startButtonText: String
-    introduction: String
+  input DropZoneInput {
+    x: Float
+    y: Float
+    width: Float
+    height: Float
   }
 
-  input MetadataInput {
-    contentType: String
-    license: String
-    title: String
+  input OptionInput {
+    optionText: String!
+    tip: String
+    correct: Boolean
+    dropZone: DropZoneInput
+    imageDetails: ImageDetailsInput
   }
 
   input QuestionInput {
-    text: String
-    overallFeedback: [FeedbackInput]
-    behaviour: BehaviourInput
-    UI: UIInput
-    answers: [AnswerInput]
+    questionText: String
+    options: [OptionInput]
+    solution: String!
+    timer: Float!
+    questionType: String!
+    imageDetails: ImageDetailsInput
+    taskDescription: String
   }
 
-  input FeedbackInput {
-    from: Int
-    to: Int
-    feedback: String
-  }
-
-  input BehaviourInput {
-    enableRetry: Boolean
-    enableSolutionsButton: Boolean
-    enableCheckButton: Boolean
-    type: String
-    singlePoint: Boolean
-    randomAnswers: Boolean
-    showSolutionsRequiresInput: Boolean
-    confirmCheckDialog: Boolean
-    confirmRetryDialog: Boolean
-    autoCheck: Boolean
-    passPercentage: Int
-    showScorePoints: Boolean
-  }
-
-  input UIInput {
-    checkAnswerButton: String
-    submitAnswerButton: String
-    showSolutionButton: String
-    tryAgainButton: String
-    tipsLabel: String
-    scoreBarLabel: String
-    tipAvailable: String
-    feedbackAvailable: String
-    readFeedback: String
-    wrongAnswer: String
-    correctAnswer: String
-    shouldCheck: String
-    shouldNotCheck: String
-    noInput: String
-    a11yCheck: String
-    a11yShowSolution: String
-    a11yRetry: String
-  }
-
-  input AnswerInput {
-    correct: Boolean
-    tipsAndFeedback: TipsAndFeedbackInput
-    text: String
-  }
-
-  input TipsAndFeedbackInput {
-    tip: String
-    chosenFeedback: String
-    notChosenFeedback: String
+  input QuizInput {
+    questions: [QuestionInput]!
   }
 
   input ImageInput {
