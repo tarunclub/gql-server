@@ -14,8 +14,8 @@ resource "aws_instance" "development-instance" {
               #!/bin/bash
               sudo apt update
               sudo apt install -y docker.io
-              sudo docker pull tarunclub/gql-server:1.0.2
-              sudo docker run -d -p 80:5000 tarunclub/gql-server:1.0.2
+              sudo docker pull tarunclub/gql-server:1.0.3
+              sudo docker run -d -p 80:5000 tarunclub/gql-server:1.0.3
               EOF
 
   tags = {
