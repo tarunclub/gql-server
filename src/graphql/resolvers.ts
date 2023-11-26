@@ -824,7 +824,7 @@ const resolvers = {
       return deletedOptionInput ? _id : null;
     },
     // @ts-ignore
-    createQuestionInput: async (_, { input }) => {
+    createQuestionInput: async (_, quizID, { input }) => {
       const createQuestionInput = await QuestionModel.create(input);
       return {
         // @ts-ignore

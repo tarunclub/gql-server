@@ -58,11 +58,12 @@ const typeDefs = gql`
   }
 
   type ClassSection {
-    _id: ID
-    schoolID: ID
-    yearID: ID
-    number: Int
-    board: Board
+    _id: ID!
+    classID: ID!
+    schoolID: ID!
+    yearID: ID!
+    number: Int!
+    boardID: ID!
   }
 
   type Organization {
@@ -195,15 +196,16 @@ const typeDefs = gql`
     _id: ID
     name: String
     description: String
+    ChatMessages: [ChatMessage]
     members: [User]
-    # Define other fields relevant to a group
+    messages: [ChatMessage]
   }
 
   type ChatMessage {
     _id: ID
     text: String
     image: String
-    group: Group
+    replies: [Reply]
     author: User
     # Other relevant fields
   }
@@ -477,6 +479,7 @@ const typeDefs = gql`
   }
 
   input QuestionInput {
+    quizID: ID!
     questionText: String
     options: [OptionInput]
     solution: String!

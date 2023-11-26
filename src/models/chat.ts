@@ -4,6 +4,7 @@ interface IGroup extends Document {
   name: string;
   description: string;
   members: mongoose.Types.ObjectId[];
+  messages: mongoose.Types.ObjectId[];
 }
 
 interface IChatMessage extends Document {
@@ -28,6 +29,7 @@ const groupSchema = new Schema<IGroup>({
   name: String,
   description: String,
   members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  messages: [{ type: Schema.Types.ObjectId, ref: 'ChatMessage' }],
 });
 
 const chatMessageSchema = new Schema<IChatMessage>({

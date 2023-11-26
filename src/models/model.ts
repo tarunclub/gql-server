@@ -48,11 +48,11 @@ interface SchoolDoc extends Document {
 }
 
 interface ClassSectionDoc extends Document {
-  class: ClassDoc['_id'];
-  school: SchoolDoc['_id'];
-  year: AcademicYearDoc['_id'];
+  classID: ClassDoc['_id'];
+  schoolID: SchoolDoc['_id'];
+  yearID: AcademicYearDoc['_id'];
   number: number;
-  board: BoardDoc['_id'];
+  boardID: BoardDoc['_id'];
 }
 
 interface OrganizationDoc extends Document {
@@ -125,22 +125,29 @@ const schoolSchema = new Schema<SchoolDoc>({
 });
 
 const classSectionSchema = new Schema<ClassSectionDoc>({
-  class: {
+  classID: {
     type: Schema.Types.ObjectId,
     ref: 'Class',
+    required: true, // Add this line if classID is required
   },
-  school: {
+  schoolID: {
     type: Schema.Types.ObjectId,
     ref: 'School',
+    required: true,
   },
-  year: {
+  yearID: {
     type: Schema.Types.ObjectId,
     ref: 'AcademicYear',
+    required: true,
   },
-  number: Number,
-  board: {
+  number: {
+    type: Number,
+    required: true,
+  },
+  boardID: {
     type: Schema.Types.ObjectId,
     ref: 'Board',
+    required: true,
   },
 });
 
