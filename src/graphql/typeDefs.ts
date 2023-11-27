@@ -179,6 +179,7 @@ const typeDefs = gql`
     name: String
     email: String
     password: String
+    number: String
     role: String
     createdAt: Date
     updatedAt: Date
@@ -196,7 +197,6 @@ const typeDefs = gql`
     _id: ID
     name: String
     description: String
-    ChatMessages: [ChatMessage]
     members: [User]
     messages: [ChatMessage]
   }
