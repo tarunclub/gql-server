@@ -37,7 +37,7 @@ const typeDefs = gql`
   type Class {
     _id: ID
     name: String
-    student_age: Int
+    ageGroup: [Int]
   }
 
   type Board {
@@ -51,24 +51,88 @@ const typeDefs = gql`
     end: Int
   }
 
+  batch {
+    _id: ID
+    name: String
+    studentIds: [ID]
+    description: String
+  }
+
+  student {
+    _id: ID
+    authId: String
+    name: String
+    contactNumber: String
+    email: String
+    parentIds: [ID]
+    classIds: [ID]
+  }
+
+  parent {
+    _id: ID
+    name: String
+    contactNumber: String
+    email: String
+    studentIds: [ID]
+  }
+
+  teachingStaff {
+    _id: ID
+    authId: String
+    schoolId: ID
+    name: String
+    contactNumber: String
+    email: String
+    role: String
+    classList: String
+    classSectionIds: [ID]
+    onlineOrInPerson: String
+    batchIds: [ID]
+  }
+
+  nonTeachingStaff {
+    _id: ID
+    authId: String
+    schoolId: ID
+    name: String
+    contactNumber: String
+    email: String
+    role: String
+  }
+
   type School {
     _id: ID
     name: String
-    org: Organization
+    adminId: ID
+    teachingStaffIds: [ID]
+    nonTeachingStaffIds: [ID]
+    organizationId: ID
+    schoolSettings:{
+      publicOrPrivate: String
+      location: String
+      schoolSettingModules: {
+        search: Boolean
+        announcement: Boolean
+        poll: Boolean
+      }
+    }  
   }
 
   type ClassSection {
     _id: ID!
-    classID: ID!
-    schoolID: ID!
-    yearID: ID!
-    number: Int!
-    boardID: ID!
+    teacherIds: [ID]
+    studentIds: [ID]
+    schoolId: ID
+    yearId: ID
+    number: Int
+    board: Board
   }
 
   type Organization {
     _id: ID
     name: String
+    adminId: ID
+    schoolIds: [ID]
   }
 
   type Teacher {
@@ -94,6 +158,26 @@ const typeDefs = gql`
     roll_number: Int!
     parentID: ID!
     phone: String
+  }
+
+  course {
+    _id: ID
+    title: String
+    teacherIds: [ID]
+    classSectionId: ID
+  }
+
+  announcement {
+    _id: ID
+    title: String
+    body: String
+    type: String
+  }
+
+  assignment {
+    _id: ID
+    difficultyLevel: String
+    quiz: Quiz
   }
 
   type Parent {
@@ -176,6 +260,7 @@ const typeDefs = gql`
 
   type User {
     _id: ID
+    authId: String
     name: String
     email: String
     password: String
@@ -222,7 +307,6 @@ const typeDefs = gql`
     text: String
     image: String
     author: User
-    # Other relevant fields
   }
 
   type Token {
