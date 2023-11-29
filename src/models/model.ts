@@ -13,7 +13,7 @@ interface BookDoc extends Document {
   name: string;
   languageCode: string;
   subject: SubjectDoc['_id'];
-  class: ClassDoc['_id'];
+  // class: ClassDoc['_id'];
   board: BoardDoc['_id'];
   year: AcademicYearDoc['_id'];
 }
@@ -28,11 +28,6 @@ interface SubjectDoc extends Document {
   credits: number;
 }
 
-interface ClassDoc extends Document {
-  name: string;
-  student_age: number;
-}
-
 interface BoardDoc extends Document {
   name: string;
 }
@@ -40,23 +35,6 @@ interface BoardDoc extends Document {
 interface AcademicYearDoc extends Document {
   start: number;
   end: number;
-}
-
-interface SchoolDoc extends Document {
-  name: string;
-  org: OrganizationDoc['_id'];
-}
-
-interface ClassSectionDoc extends Document {
-  classID: ClassDoc['_id'];
-  schoolID: SchoolDoc['_id'];
-  yearID: AcademicYearDoc['_id'];
-  number: number;
-  boardID: BoardDoc['_id'];
-}
-
-interface OrganizationDoc extends Document {
-  name: string;
 }
 
 const imageSchema = new Schema<ImageDoc>({
@@ -78,10 +56,10 @@ const bookSchema = new Schema<BookDoc>({
     type: Schema.Types.ObjectId,
     ref: 'Subject',
   },
-  class: {
-    type: Schema.Types.ObjectId,
-    ref: 'Class',
-  },
+  // class: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Class',
+  // },
   board: {
     type: Schema.Types.ObjectId,
     ref: 'Board',
@@ -102,11 +80,6 @@ const subjectSchema = new Schema<SubjectDoc>({
   credits: Number,
 });
 
-const classSchema = new Schema<ClassDoc>({
-  name: String,
-  student_age: Number,
-});
-
 const boardSchema = new Schema<BoardDoc>({
   name: String,
 });
@@ -116,78 +89,19 @@ const academicYearSchema = new Schema<AcademicYearDoc>({
   end: Number,
 });
 
-const schoolSchema = new Schema<SchoolDoc>({
-  name: String,
-  org: {
-    type: Schema.Types.ObjectId,
-    ref: 'Organization',
-  },
-});
-
-const classSectionSchema = new Schema<ClassSectionDoc>({
-  classID: {
-    type: Schema.Types.ObjectId,
-    ref: 'Class',
-    required: true, // Add this line if classID is required
-  },
-  schoolID: {
-    type: Schema.Types.ObjectId,
-    ref: 'School',
-    required: true,
-  },
-  yearID: {
-    type: Schema.Types.ObjectId,
-    ref: 'AcademicYear',
-    required: true,
-  },
-  number: {
-    type: Number,
-    required: true,
-  },
-  boardID: {
-    type: Schema.Types.ObjectId,
-    ref: 'Board',
-    required: true,
-  },
-});
-
-const organizationSchema = new Schema<OrganizationDoc>({
-  name: String,
-});
-
 const ImageModel: Model<ImageDoc> = mongoose.model('Image', imageSchema);
 const BookModel: Model<BookDoc> = mongoose.model('Book', bookSchema);
 const SubjectModel: Model<SubjectDoc> = mongoose.model(
   'Subject',
   subjectSchema
 );
-const ClassModel: Model<ClassDoc> = mongoose.model('Class', classSchema);
 const BoardModel: Model<BoardDoc> = mongoose.model('Board', boardSchema);
 const AcademicYearModel: Model<AcademicYearDoc> = mongoose.model(
   'AcademicYear',
   academicYearSchema
 );
-const SchoolModel: Model<SchoolDoc> = mongoose.model('School', schoolSchema);
-const ClassSectionModel: Model<ClassSectionDoc> = mongoose.model(
-  'ClassSection',
-  classSectionSchema
-);
-const OrganizationModel: Model<OrganizationDoc> = mongoose.model(
-  'Organization',
-  organizationSchema
-);
 
-export {
-  ImageModel,
-  BookModel,
-  SubjectModel,
-  ClassModel,
-  BoardModel,
-  AcademicYearModel,
-  SchoolModel,
-  ClassSectionModel,
-  OrganizationModel,
-};
+export { ImageModel, BookModel, SubjectModel, BoardModel, AcademicYearModel };
 
 // Part - 2
 
@@ -222,42 +136,6 @@ export const TeacherSectionMapModel: Model<ITeacherSectionMap> = mongoose.model(
   new Schema<ITeacherSectionMap>({
     teacherID: { type: Schema.Types.ObjectId, ref: 'Teacher' },
     classSectionID: { type: Schema.Types.ObjectId, ref: 'ClassSection' },
-  })
-);
-
-// Student model
-export interface IStudent extends Document {
-  name: string;
-  date_of_birth: Date;
-  classSectionID: Schema.Types.ObjectId;
-  roll_number: number;
-  parentID: Schema.Types.ObjectId;
-  phone: string;
-}
-
-export const StudentModel: Model<IStudent> = mongoose.model(
-  'Student',
-  new Schema<IStudent>({
-    name: { type: String },
-    date_of_birth: { type: Date },
-    classSectionID: { type: Schema.Types.ObjectId, ref: 'ClassSection' },
-    roll_number: { type: Number },
-    parentID: { type: Schema.Types.ObjectId, ref: 'Parent' },
-    phone: { type: String },
-  })
-);
-
-// Parent model
-export interface IParent extends Document {
-  name: string;
-  phone: string;
-}
-
-export const ParentModel: Model<IParent> = mongoose.model(
-  'Parent',
-  new Schema<IParent>({
-    name: { type: String, required: true },
-    phone: { type: String, required: true },
   })
 );
 

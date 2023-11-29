@@ -51,16 +51,32 @@ const typeDefs = gql`
     end: Int
   }
 
-  batch {
+  type Schedule {
+    dayOfWeek: String
+    startTime: Date
+    endTime: Date
+  }
+
+  type StudyMaterial {
+    bookIds: [ID]
+  }
+
+  type Batch {
     _id: ID
     name: String
+    teacherIds: [ID]
     studentIds: [ID]
+    subjects: [String]
+    announcementIds: [ID]
+    schedule: [Schedule]
+    studyMaterial: StudyMaterial
     description: String
   }
 
-  student {
+  type Student {
     _id: ID
     authId: String
+    schoolId: ID
     name: String
     contactNumber: String
     email: String
@@ -68,7 +84,7 @@ const typeDefs = gql`
     classIds: [ID]
   }
 
-  parent {
+  type Parent {
     _id: ID
     name: String
     contactNumber: String
@@ -76,7 +92,7 @@ const typeDefs = gql`
     studentIds: [ID]
   }
 
-  teachingStaff {
+  type TeachingStaff {
     _id: ID
     authId: String
     schoolId: ID
@@ -84,13 +100,13 @@ const typeDefs = gql`
     contactNumber: String
     email: String
     role: String
-    classList: String
+    classList: [String]
     classSectionIds: [ID]
     onlineOrInPerson: String
     batchIds: [ID]
   }
 
-  nonTeachingStaff {
+  type NonTeachingStaff {
     _id: ID
     authId: String
     schoolId: ID
@@ -98,6 +114,18 @@ const typeDefs = gql`
     contactNumber: String
     email: String
     role: String
+  }
+
+  type SchoolSettings {
+    publicOrPrivate: String
+    location: String
+    schoolSettingModules: SchoolSettingModules
+  }
+
+  type SchoolSettingModules {
+    search: Boolean
+    announcement: Boolean
+    poll: Boolean
   }
 
   type School {
@@ -107,15 +135,7 @@ const typeDefs = gql`
     teachingStaffIds: [ID]
     nonTeachingStaffIds: [ID]
     organizationId: ID
-    schoolSettings:{
-      publicOrPrivate: String
-      location: String
-      schoolSettingModules: {
-        search: Boolean
-        announcement: Boolean
-        poll: Boolean
-      }
-    }  
+    schoolSettings: SchoolSettings
   }
 
   type ClassSection {
@@ -123,9 +143,6 @@ const typeDefs = gql`
     teacherIds: [ID]
     studentIds: [ID]
     schoolId: ID
-    yearId: ID
-    number: Int
-    board: Board
   }
 
   type Organization {
@@ -150,40 +167,24 @@ const typeDefs = gql`
     classSectionID: ID
   }
 
-  type Student {
-    _id: ID!
-    name: String!
-    date_of_birth: Date
-    classSectionID: ID!
-    roll_number: Int!
-    parentID: ID!
-    phone: String
-  }
-
-  course {
+  type Course {
     _id: ID
     title: String
     teacherIds: [ID]
     classSectionId: ID
   }
 
-  announcement {
+  type Announcement {
     _id: ID
     title: String
     body: String
     type: String
   }
 
-  assignment {
+  type Assignment {
     _id: ID
-    difficultyLevel: String
+    difficulty: String
     quiz: Quiz
-  }
-
-  type Parent {
-    _id: ID!
-    name: String!
-    phone: String!
   }
 
   type Topic {
@@ -416,6 +417,18 @@ const typeDefs = gql`
     getQuestionInputs: [Question]
     getQuizInput(_id: ID!): Quiz
     getQuizInputs: [Quiz]
+    getAnnouncement(_id: ID!): Announcement
+    getAnnouncements: [Announcement]
+    getAssignment(_id: ID!): Assignment
+    getAssignments: [Assignment]
+    getBatch(_id: ID!): Batch
+    getBatches: [Batch]
+    getCourse(_id: ID!): Course
+    getCourses: [Course]
+    getTeachingStaff(_id: ID!): TeachingStaff
+    getTeachingStaffs: [TeachingStaff]
+    getNonTeachingStaff(_id: ID!): NonTeachingStaff
+    getNonTeachingStaffs: [NonTeachingStaff]
   }
 
   type Mutation {
@@ -539,6 +552,93 @@ const typeDefs = gql`
     createQuizInput(input: QuizInput): Quiz
     updateQuizInput(_id: ID!, input: QuizInput): Quiz
     deleteQuizInput(_id: ID!): ID
+
+    createAnnouncement(input: AnnouncementInput): Announcement
+    updateAnnouncement(_id: ID!, input: AnnouncementInput): Announcement
+    deleteAnnouncement(_id: ID!): ID
+
+    createAssignment(input: AssignmentInput): Assignment
+    updateAssignment(_id: ID!, input: AssignmentInput): Assignment
+    deleteAssignment(_id: ID!): ID
+
+    createBatch(input: BatchInput): Batch
+    updateBatch(_id: ID!, input: BatchInput): Batch
+    deleteBatch(_id: ID!): ID
+
+    createCourse(input: CourseInput): Course
+    updateCourse(_id: ID!, input: CourseInput): Course
+    deleteCourse(_id: ID!): ID
+
+    createTeachingStaff(input: TeachingStaffInput): TeachingStaff
+    updateTeachingStaff(_id: ID!, input: TeachingStaffInput): TeachingStaff
+    deleteTeachingStaff(_id: ID!): ID
+
+    createNonTeachingStaff(input: NonTeachingStaffInput): NonTeachingStaff
+    updateNonTeachingStaff(
+      _id: ID!
+      input: NonTeachingStaffInput
+    ): NonTeachingStaff
+    deleteNonTeachingStaff(_id: ID!): ID
+  }
+
+  input AnnouncementInput {
+    title: String
+    body: String
+    type: String
+  }
+
+  input AssignmentInput {
+    difficulty: String
+    quiz: QuizInput
+  }
+
+  input BatchInput {
+    name: String
+    teacherIds: [ID]
+    studentIds: [ID]
+    subjects: [String]
+    announcementIds: [ID]
+    schedule: [ScheduleInput]
+    studyMaterial: StudyMaterialInput
+    description: String
+  }
+
+  input ScheduleInput {
+    dayOfWeek: String
+    startTime: Date
+    endTime: Date
+  }
+
+  input StudyMaterialInput {
+    bookIds: [ID]
+  }
+
+  input TeachingStaffInput {
+    authId: String
+    schoolId: ID
+    name: String
+    contactNumber: String
+    email: String
+    role: String
+    classList: [String]
+    classSectionIds: [ID]
+    onlineOrInPerson: String
+    batchIds: [ID]
+  }
+
+  input NonTeachingStaffInput {
+    authId: String
+    schoolId: ID
+    name: String
+    contactNumber: String
+    email: String
+    role: String
+  }
+
+  input CourseInput {
+    title: String
+    teacherIds: [ID]
+    classSectionId: ID
   }
 
   input ImageDetailsInput {

@@ -2,15 +2,9 @@ import {
   AcademicYearModel,
   BoardModel,
   BookModel,
-  ClassModel,
-  ClassSectionModel,
   ExamQuestionModel,
   ExamStudentResponseModel,
   ImageModel,
-  OrganizationModel,
-  ParentModel,
-  SchoolModel,
-  StudentModel,
   SubjectModel,
   TeacherModel,
   TeacherSectionMapModel,
@@ -22,10 +16,22 @@ import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/generateToken';
 import { ChatMessage, Group, Reply, Thread } from '../models/chat';
 import {
+  AnnouncementModel,
+  AssignmentModel,
+  BatchModel,
+  ClassModel,
+  ClassSectionModel,
+  CourseModel,
   ImageDetailsModel,
+  NonTeachingStaffModel,
   OptionModel,
+  OrganizationModel,
+  ParentModel,
   QuestionModel,
   QuizModel,
+  SchoolModel,
+  StudentModel,
+  TeachingStaffModel,
 } from '../models/quizz-app';
 
 const resolvers = {
@@ -241,6 +247,48 @@ const resolvers = {
     },
     getQuizInputs: async () => {
       return await QuizModel.find();
+    },
+    getBatches: async () => {
+      return await BatchModel.find();
+    },
+    // @ts-ignore
+    getBatch: async (_, { _id }) => {
+      return await BatchModel.findById(_id);
+    },
+    getCourses: async () => {
+      return await CourseModel.find();
+    },
+    // @ts-ignore
+    getCourse: async (_, { _id }) => {
+      return await CourseModel.findById(_id);
+    },
+    getAnnouncements: async () => {
+      return await AnnouncementModel.find();
+    },
+    // @ts-ignore
+    getAnnouncement: async (_, { _id }) => {
+      return await AnnouncementModel.findById(_id);
+    },
+    getAssignments: async () => {
+      return await AssignmentModel.find();
+    },
+    // @ts-ignore
+    getAssignment: async (_, { _id }) => {
+      return await AssignmentModel.findById(_id);
+    },
+    getTeachingStaffs: async () => {
+      return await TeachingStaffModel.find();
+    },
+    // @ts-ignore
+    getTeachingStaff: async (_, { _id }) => {
+      return await TeachingStaffModel.findById(_id);
+    },
+    getNonTeachingStaffs: async () => {
+      return await NonTeachingStaffModel.find();
+    },
+    // @ts-ignore
+    getNonTeachingStaff: async (_, { _id }) => {
+      return await NonTeachingStaffModel.findById(_id);
     },
   },
   Mutation: {
@@ -862,6 +910,88 @@ const resolvers = {
     deleteQuizInput: async (_, { _id }) => {
       const deletedQuizInput = await QuizModel.findByIdAndDelete(_id);
       return deletedQuizInput ? _id : null;
+    },
+    // @ts-ignore
+    createBatch: async (_, { input }) => {
+      const createBatch = await BatchModel.create(input);
+      return {
+        // @ts-ignore
+        ...createBatch._doc,
+        batchID: createBatch._id,
+      };
+    },
+    // @ts-ignore
+    deleteBatch: async (_, { _id }) => {
+      const deletedBatch = await BatchModel.findByIdAndDelete(_id);
+      return deletedBatch ? _id : null;
+    },
+    // @ts-ignore
+    updateBatch: async (_, { _id, input }) => {
+      return await BatchModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    createCourse: async (_, { input }) => {
+      const createCourse = await CourseModel.create(input);
+      return {
+        // @ts-ignore
+        ...createCourse._doc,
+        courseID: createCourse._id,
+      };
+    },
+    // @ts-ignore
+    deleteCourse: async (_, { _id }) => {
+      const deletedCourse = await CourseModel.findByIdAndDelete(_id);
+      return deletedCourse ? _id : null;
+    },
+    // @ts-ignore
+    updateCourse: async (_, { _id, input }) => {
+      return await CourseModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    createAnnouncement: async (_, { input }) => {
+      const createAnnouncement = await AnnouncementModel.create(input);
+      return {
+        // @ts-ignore
+        ...createAnnouncement._doc,
+        announcementID: createAnnouncement._id,
+      };
+    },
+    // @ts-ignore
+    deleteAnnouncement: async (_, { _id }) => {
+      const deletedAnnouncement = await AnnouncementModel.findByIdAndDelete(
+        _id
+      );
+      return deletedAnnouncement ? _id : null;
+    },
+    // @ts-ignore
+    updateAnnouncement: async (_, { _id, input }) => {
+      return await AnnouncementModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
+    },
+    // @ts-ignore
+    createAssignment: async (_, { input }) => {
+      const createAssignment = await AssignmentModel.create(input);
+      return {
+        // @ts-ignore
+        ...createAssignment._doc,
+        assignmentID: createAssignment._id,
+      };
+    },
+    // @ts-ignore
+    deleteAssignment: async (_, { _id }) => {
+      const deletedAssignment = await AssignmentModel.findByIdAndDelete(_id);
+      return deletedAssignment ? _id : null;
+    },
+    // @ts-ignore
+    updateAssignment: async (_, { _id, input }) => {
+      return await AssignmentModel.findByIdAndUpdate(_id, input, {
+        new: true,
+      });
     },
   },
 };
