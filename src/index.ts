@@ -21,7 +21,7 @@ const server = new ApolloServer({
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 });
 
-server.listen({ port: 5000 }).then(({ url }) => {
+server.listen({ port: 5001 }).then(({ url }) => {
   console.log(`Server ready at ${url}`);
 
   connectDB();

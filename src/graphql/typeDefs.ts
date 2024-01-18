@@ -3,24 +3,25 @@ import { gql } from 'apollo-server';
 const typeDefs = gql`
   scalar Date
 
-  type Image {
+  type BookPage {
     _id: ID
     absoluteImageURL: String
     relativeS3ImageURI: String
     number: Int
     absoluteJSONFileURL: String
     relativeS3JSONFileURI: String
-    book: Book
+    bookID: ID
   }
 
   type Book {
     _id: ID
     name: String
-    subject: Subject
+    description: String
     languageCode: String
-    class: Class
-    board: Board
-    year: AcademicYear
+    subjectId: ID
+    classId: ID
+    boardId: ID
+    academicYearId: ID
   }
 
   type Subject {
@@ -188,14 +189,20 @@ const typeDefs = gql`
   }
 
   type Topic {
-    _id: ID!
-    name: String!
-    subjectID: ID!
-    language_code: String!
-    classID: ID!
-    boardID: ID!
-    yearID: ID!
+    _id: ID
+    name: String
+    language_code: String
+    level: String
+    bookPageId: ID
     parent_topic_ID: ID
+    position: Position
+  }
+
+  type Position {
+    left: Float
+    top: Float
+    width: Float
+    height: Float
   }
 
   type ExamQuestion {
@@ -208,8 +215,8 @@ const typeDefs = gql`
   }
 
   type ExamStudentResponse {
-    _id: ID!
-    questionID: ID!
+    _id: ID
+    questionID: ID
     studentID: ID
     roll_number: Int
     className: String
@@ -311,35 +318,35 @@ const typeDefs = gql`
   }
 
   type Token {
-    token: String!
+    token: String
   }
 
   type Quiz {
     _id: ID!
-    questions: [Question!]!
+    questions: [Question!]
   }
 
   type Question {
     _id: ID
     questionText: String
     options: [Option]
-    solution: String!
-    timer: Float!
-    questionType: String!
+    solution: String
+    timer: Float
+    questionType: String
     imageDetails: ImageDetails
     taskDescription: String
   }
 
   type ImageDetails {
     _id: ID
-    path: String!
+    path: String
     height: Float
     width: Float
   }
 
   type Option {
     _id: ID
-    optionText: String!
+    optionText: String
     tip: String
     correct: Boolean
     dropZone: DropZone
